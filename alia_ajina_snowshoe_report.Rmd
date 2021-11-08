@@ -33,57 +33,96 @@ filter(age == "j") %>%
 mutate(date = mdy(date)) %>% 
 mutate(year = year(date)) %>% 
 group_by(year) %>% 
-summarise(count=n())
+summarise(hare_count = n())
   
 ```
 
-## Summary Statistics??? do i need to do this?
+## Summary Statistics
 
-Summarize the data and create a summary table with kableExtra.
+Summarize the data and create a table of summary statistics 
 
 ```{r}
 # Create table of summary stats
-juvenile_hare_table <- juvenile_hare %>% 
-  summarise(mean = round(mean(size), 2), 
-            median = median(size), 
-            sd = round(sd(size), 2))
-
-# Use kableExtra to finalize table
- 
-juvenile_hare_table %>% 
-kable(col.names = c("Count", 
-                      "Mean Count",
-                      "Median Count ",
-                      "Standard Deviation",
-                      "Sample Size"),
-        caption = "<center>Table 1: Summary Statistics of Purple Sea Urchins at Naples Reef in 2010<center>") %>% 
-  kable_styling(bootstrap_options = "bordered",
-                full_width = FALSE, position = "center")
+juvenile_hare_summary <- juvenile_hare %>% 
+  summarise(mean_count = mean(hare_count, na.rm = TRUE), 
+            median_count = median(hare_count, na.rm = TRUE), 
+            sd_count = sd(hare_count, na.rm = TRUE), 
+            max_count = max(hare_count, na.rm = TRUE),
+            min_count = min(hare_count, na.rm = TRUE))
 ```
 
 ## Data Visualization
 
-
 ```{r}
-# Create bar graph
+# Create column graph
 ggplot(data = juvenile_hare, 
-       aes(x = year, y = count, fill = count)) +
+       aes(x = year, y = hare_count)) +
 # Change aesthetics accordingly
-  geom_col() +
+  geom_col(color = "light blue", fill = "light blue") +
   theme_minimal() +   
-  scale_x_continuous(breaks = c(1999, 2000, 2001, 2003, 2004, 2005, 2006, 2007, 2008, 2010, 2011, 2012 )) +
+  scale_x_continuous(breaks = 1999:2012) +
   scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140)) +
   labs( x = "Year",
-        y = "Number of Juvenile Hares",
-        title = " Distribution of Juvenile Hares fron 1999 - 2012 (AJINA)",
-        caption = "Figure 1.1: ") +
+        y = "Number of Juvenile Hare Traps",
+        caption = expression(paste(bold("Figure 1: "), "Total number of juvenile snowshoe hare trappings per year from 1999 to 2012 at Bonanza Creek Long Term Ecological Research site"))) +
 # Adjust positioning
-  theme(axis.text.x = element_text(size = 6, hjust = 0.6, angle = 50),
+  theme(axis.text.x = element_text(size = 6, hjust = 0.5),
         axis.text.y = element_text(size = 6),
         axis.title.x = element_text(hjust = 0.5, 
                                     vjust = 0.5),
-        plot.title = element_text(hjust = .5), 
-        plot.subtitle = element_text(hjust = .5),
-        plot.caption = element_text(hjust = .2), 
+        plot.caption = element_text(hjust = .9), 
         legend.position = "none")
 ```
+
+Then, in 3 - 4 sentences below your figure, describe major takeaways from your graph about total snowshoe hare trappings at the site. You might consider:
+
+What were the minimum and maximum counts of juvenile hare trappings?
+Mean or median annual number of juvenile hares trapped?
+General/notable trends?
+These are absolute counts, but this count is also impacted by effort (e.g. the number of days and number of traps in the study each year). What would you suggest be done moving forward (you are not expected to actually do this) to standardize the juvenile hare population in future analyses?
+
+
+### Annual Juvenile Hare Trap Counts Outcomes:
+
+
+
+## Juvenile Hare Weights
+
+## Data Wrangling
+
+```{r}
+hare_weights_sex <- bonanza %>% 
+  filter(age == "j") %>% 
+  mutate(full_grid = case_when(
+    grid == "bonmat" ~ "Bonanza Mature",
+    grid == "bonrip" ~ "Bonanza Riparian",
+    grid == "bonbs" ~ "Bonanza Black Spruce")) %>% 
+  mutate(full_sex = case_when(
+    sex == "f" ~ "female",
+    sex == "m" ~ "male",
+    TRUE ~ "NA")) %>% 
+  group_by(weight) %>% 
+  summarize(full_sex, full_grid)
+```
+
+## Data Visualization
+
+```{r}
+ggplot(data = hare_weights_sex, aes(x = full_sex, y = weight)) +
+  geom_col(aes(color = full_sex, 
+                     fill = full_sex), bins = 10) +
+  scale_fill_manual(values = c("pink", "blue", "black")) +
+  scale_color_manual(values = c("pink", "blue", "black")) +
+  facet_wrap(~ full_grid) +
+  theme_grey() +
+  labs(x = "Sex",
+       y = "Weight (g)",
+       caption = expression(paste(bold("Figure 2: "), "Distribution of juvenile hare weights in grams by sex and site at Bonanza Creek Long Term Ecological Research site. "))) +
+  theme(axis.text.x = element_text(size = 6, hjust = 0.5),
+        axis.text.y = element_text(size = 6),
+        axis.title.x = element_text(hjust = 0.5, 
+                                    vjust = 0.5),
+        plot.caption = element_text(hjust = .8), 
+        legend.position = "none")
+```
+
