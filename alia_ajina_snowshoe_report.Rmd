@@ -78,13 +78,7 @@ ggplot(data = juvenile_hare,
         legend.position = "none")
 ```
 
-Then, in 3 - 4 sentences below your figure, describe major takeaways from your graph about total snowshoe hare trappings at the site. You might consider:
-
-What were the minimum and maximum counts of juvenile hare trappings?
-Mean or median annual number of juvenile hares trapped?
-General/notable trends?
-These are absolute counts, but this count is also impacted by effort (e.g. the number of days and number of traps in the study each year). What would you suggest be done moving forward (you are not expected to actually do this) to standardize the juvenile hare population in future analyses?
-
+The minimum count for juvenile hare trappings is `r juvenile_hare_summary$min_count` and the maximum is `r juvenile_hare_summary$max_count`. The mean annual number of juvenile hares trapped is `juvenile_hare_summary$mean_count` and the median is `r juvenile_hare_summary$median_count`. It appears that since 1999 the number of juvenile hares that have been trapped has decreased, although the trend is not profound. In the years 2005 and 2008 a small increase can be seen in the number of juvenile hares trapped in comparison to years prior. These counts, although absolute, are impacted by effort (number of days and number of traps in the study each year). Efforts for each year may have been uniform, or they may have varied greatly, which could have affected the data collected between 1999 to 2012. It would be beneficial to the study to quantify the number of observations recorded each year and standardize that number in future analyses in order to have accurate, standardized data that may better represent the true population of juvenile hares.
 
 ### Annual Juvenile Hare Trap Counts Outcomes:
 
@@ -128,6 +122,9 @@ ggplot(data = hare_weights_sex, aes(x = full_sex, y = weight)) +
         plot.caption = element_text(hjust = .8), 
         legend.position = "none")
 ```
+
+On average at each of the sites; Bonanza Black Spruce, Bonanza Mature, and Bonanza Riparian, male and female juvenile hares have similar weight distributions. In the Bonanza Black Spruce site and the Bonanza Mature site, average male and female comparisons differ; females are slightly larger in the Bonanza Black Spruce site whereas they are slightly smaller in the Bonanza Mature site. Both the female and male juvenile hare weight is significantly larger at the Bonanza Riparian site in comparison to the other two sites. The NA juvenile hares that are present at Bonanza Mature and Bonanza Riparian are dramatically smaller than the female and male recorded weights at these sites. A possible hypothesis for this occurrence may be that the NA juvenile hares were too small for a sex to be determined. 
+
 Then, in 2 - 3 sentences below your visualization(s) describe in text the main takeaways that you would want the audience to understand from your figures.
 
 ## Juvenile Weight Comparison
@@ -237,12 +234,13 @@ Note: Exploratory graphs (e.g. histograms, QQ-plots) to explore assumptions of y
 
 4. Relationship between juvenile weight & hind foot length. Explore the relationship between juvenile snowshoe hare hind foot length (variable `hindft`, recorded in millimeters), and weight. Include all juvenile hares in the study. Create a final visualization of juvenile hare hind foot length versus weight. Include a figure caption.
 
+
+
 Upon seeing your graph, your “boss” tells you to try out linear regression to describe how juvenile snowshoe hare weight changes with respect to hind foot length. Try it out (the only variables you are expected to include here are hind foot length and weight, using data for all juvenile hares in the data, e.g. you are not expected to explore impacts of sex, site, etc.), and check the model diagnostics.
 
 In 2 - 3 sentences below your figure, describe the outcome of your linear regression exploration (e.g. slope interpretation, R2 value, and Pearson's r correlation) and touch briefly on which assumption(s) of linear regression may be a concern, and additional thoughts you have about how well (or not well…) the linear model describes the relationship. What worries you? 
 
 Summary: Include a very short summary describing your main findings from your juvenile hares exploration (bullet points are fine)
-
 
 Citations: Include citations (professionally formatted), including the data citation and any other resources that were references in your mini report. 
 
