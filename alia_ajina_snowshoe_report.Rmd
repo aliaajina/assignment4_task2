@@ -5,10 +5,11 @@ date: "11/3/2021"
 output: html_document
 ---
 
-## Overview
+# Introduction
+
+# Data and Analyses
 
 ## Setup
-
 
 ```{r setup, include=TRUE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = TRUE)
@@ -17,7 +18,10 @@ library(here)
 library(janitor)
 library(lubridate)
 library(kableExtra)
+library(effsize)
 ```
+
+# Juvenile Hare Initial Investigation
 
 ## Read in Bonanza Creek Hares data
 
@@ -85,7 +89,6 @@ These are absolute counts, but this count is also impacted by effort (e.g. the n
 ### Annual Juvenile Hare Trap Counts Outcomes:
 
 
-
 ## Juvenile Hare Weights
 
 ## Data Wrangling
@@ -125,4 +128,121 @@ ggplot(data = hare_weights_sex, aes(x = full_sex, y = weight)) +
         plot.caption = element_text(hjust = .8), 
         legend.position = "none")
 ```
+Then, in 2 - 3 sentences below your visualization(s) describe in text the main takeaways that you would want the audience to understand from your figures.
+
+## Juvenile Weight Comparison
+
+3. Juvenile weight comparison (male & female snowshoe hares). Further compare mean weights for **juvenile male and female snowshoe hares** included in this study. In this section, you should include:
+
+A finalized table containing the mean, standard deviation, and sample size for male and female juvenile snowshoe hares, with a table caption (remember, a table caption should be placed *above* the table in your report)
+
+```{r}
+# Data wrangling
+sex_weights_sum <- bonanza %>% 
+  filter(age == "j") %>% 
+  mutate(full_sex = case_when(
+    sex == "f" ~ "Female",
+    sex == "m" ~ "Male")) %>% 
+  group_by(full_sex) %>% 
+  summarise(weight)
+  
+# Create summary statistics
+sex_weights_summary <- sex_weights_sum %>% 
+  summarize(mean_weight =round(mean(weight, na.rm =TRUE), 2),
+            median_weight = median(weight, na.rm = TRUE),
+            sd_weight = round(sd(weight, na.rm = TRUE), 2),
+            sample_size_weight = n())
+
+# Finalized table:
+sex_weights_summary %>% 
+  kable(col.names = c( "Sex",
+                      "Mean Weight (g)",
+                      "Median Weight (g)",
+                      "Standard Deviation (g)",
+                      "Sample Size"),
+        caption = "<center>Table 1: Summary statistics of male and female juvenile snowshoe hare's weight (g) at Bonanza Creek LTER<center>") %>% 
+  kable_styling(bootstrap_options = "bordered",
+                full_width = F, position = "center")
+
+```
+
+```{r, include = FALSE}
+# Exploratory graphs to decide if using a t-test is appropriate
+
+# Exploratory histogram
+ggplot(data = sex_weights_sum, aes(x = weight)) +
+  geom_histogram(bins = 10) +
+  facet_wrap(~ full_sex)
+
+# Exploratory QQ-plot
+ggplot(data = sex_weights_sum, aes(sample = weight)) +
+  stat_qq() + 
+  stat_qq_line() +
+  facet_wrap(~ full_sex)
+```
+
+
+## Means comparison
+
+```{r}
+# Create female vector for means comparison
+fem_weight <- sex_weights_sum %>% 
+  filter(full_sex == "Female") %>% 
+  drop_na(weight) %>% 
+  pull(weight)
+
+# Create male vector for means comparison
+m_weight <- sex_weights_sum %>% 
+  filter(full_sex == "Male") %>% 
+  drop_na(weight) %>% 
+  pull(weight)
+```
+
+### Cohen's D
+
+```{r}
+# Run cohen's d for effect size
+weight_effect <- cohen.d(fem_weight, m_weight)
+# View effect size
+weight_effect
+```
+
+### t-test
+
+```{r}
+# Run a t-test
+weight_t <- t.test(fem_weight, m_weight)
+# View t-test results
+weight_t
+```
+
+### Code for Actual Difference in Means
+
+```{r}
+# Run code to get the means and SDs for both female and male vectors
+fem_mean <- mean(fem_weight)
+m_mean <- mean(m_weight)
+fem_sd <- sd(fem_weight)
+m_sd <- sd(m_weight)
+```
+
+A 2 - 3 sentence comprehensive statement of the means comparison, including at least:
+The actual difference in means
+Effect size (Cohen's *d*) (see effsize::cohen.d() example in the Lab 5 key)
+Outcome of an unpaired two-sample t-test
+ 
+Note: Exploratory graphs (e.g. histograms, QQ-plots) to explore assumptions of your t-test should not show up in your final knitted document, but you DO still need to create and think about them to determine whether a t-test is appropriate. If you want keep the code chunk containing those exploratory visualizations in your .Rmd but not appear in the knitted doc, you can add `include = FALSE` in the code chunk header.
+
+
+
+4. Relationship between juvenile weight & hind foot length. Explore the relationship between juvenile snowshoe hare hind foot length (variable `hindft`, recorded in millimeters), and weight. Include all juvenile hares in the study. Create a final visualization of juvenile hare hind foot length versus weight. Include a figure caption.
+
+Upon seeing your graph, your “boss” tells you to try out linear regression to describe how juvenile snowshoe hare weight changes with respect to hind foot length. Try it out (the only variables you are expected to include here are hind foot length and weight, using data for all juvenile hares in the data, e.g. you are not expected to explore impacts of sex, site, etc.), and check the model diagnostics.
+
+In 2 - 3 sentences below your figure, describe the outcome of your linear regression exploration (e.g. slope interpretation, R2 value, and Pearson's r correlation) and touch briefly on which assumption(s) of linear regression may be a concern, and additional thoughts you have about how well (or not well…) the linear model describes the relationship. What worries you? 
+
+Summary: Include a very short summary describing your main findings from your juvenile hares exploration (bullet points are fine)
+
+
+Citations: Include citations (professionally formatted), including the data citation and any other resources that were references in your mini report. 
 
