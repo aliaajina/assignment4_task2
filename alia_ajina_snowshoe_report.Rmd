@@ -9,9 +9,7 @@ output: html_document
 
 # Data and Analyses
 
-## Setup
-
-```{r setup, include=TRUE, message=FALSE}
+```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = TRUE)
 library(tidyverse)
 library(here)
@@ -23,9 +21,8 @@ library(effsize)
 
 # Juvenile Hare Initial Investigation
 
-## Read in Bonanza Creek Hares data
-
-```{r}
+```{r, include = FALSE}
+# Read in Bonanza Creek Hares data
 bonanza <- read_csv(here("data", "bonanza_hares.csv"))
 ```
 
@@ -78,12 +75,11 @@ ggplot(data = juvenile_hare,
         legend.position = "none")
 ```
 
-The minimum count for juvenile hare trappings is `r juvenile_hare_summary$min_count` and the maximum is `r juvenile_hare_summary$max_count`. The mean annual number of juvenile hares trapped is `juvenile_hare_summary$mean_count` and the median is `r juvenile_hare_summary$median_count`. It appears that since 1999 the number of juvenile hares that have been trapped has decreased, although the trend is not profound. In the years 2005 and 2008 a small increase can be seen in the number of juvenile hares trapped in comparison to years prior. These counts, although absolute, are impacted by effort (number of days and number of traps in the study each year). Efforts for each year may have been uniform, or they may have varied greatly, which could have affected the data collected between 1999 to 2012. It would be beneficial to the study to quantify the number of observations recorded each year and standardize that number in future analyses in order to have accurate, standardized data that may better represent the true population of juvenile hares.
-
 ### Annual Juvenile Hare Trap Counts Outcomes:
 
+The minimum count for juvenile hare trappings is `r juvenile_hare_summary$min_count` and the maximum is `r juvenile_hare_summary$max_count`. The mean annual number of juvenile hares trapped is `juvenile_hare_summary$mean_count` and the median is `r juvenile_hare_summary$median_count`. It appears that since 1999 the number of juvenile hares that have been trapped has decreased, although the trend is not profound. In the years 2005 and 2008 a small increase can be seen in the number of juvenile hares trapped in comparison to years prior. These counts, although absolute, are impacted by effort (number of days and number of traps in the study each year). Efforts for each year may have been uniform, or they may have varied greatly, which could have affected the data collected between 1999 to 2012. It would be beneficial to the study to quantify the number of observations recorded each year and standardize that number in future analyses in order to have accurate, standardized data that may better represent the true population of juvenile hares.
 
-## Juvenile Hare Weights
+# Juvenile Hare Weights
 
 ## Data Wrangling
 
@@ -101,6 +97,8 @@ hare_weights_sex <- bonanza %>%
   group_by(weight) %>% 
   summarize(full_sex, full_grid)
 ```
+
+# Create summary statistics as well??????
 
 ## Data Visualization
 
@@ -124,8 +122,6 @@ ggplot(data = hare_weights_sex, aes(x = full_sex, y = weight)) +
 ```
 
 On average at each of the sites; Bonanza Black Spruce, Bonanza Mature, and Bonanza Riparian, male and female juvenile hares have similar weight distributions. In the Bonanza Black Spruce site and the Bonanza Mature site, average male and female comparisons differ; females are slightly larger in the Bonanza Black Spruce site whereas they are slightly smaller in the Bonanza Mature site. Both the female and male juvenile hare weight is significantly larger at the Bonanza Riparian site in comparison to the other two sites. The NA juvenile hares that are present at Bonanza Mature and Bonanza Riparian are dramatically smaller than the female and male recorded weights at these sites. A possible hypothesis for this occurrence may be that the NA juvenile hares were too small for a sex to be determined. 
-
-Then, in 2 - 3 sentences below your visualization(s) describe in text the main takeaways that you would want the audience to understand from your figures.
 
 ## Juvenile Weight Comparison
 
@@ -178,10 +174,11 @@ ggplot(data = sex_weights_sum, aes(sample = weight)) +
   facet_wrap(~ full_sex)
 ```
 
-
 ## Means comparison
 
 ```{r}
+# Means comparison
+
 # Create female vector for means comparison
 fem_weight <- sex_weights_sum %>% 
   filter(full_sex == "Female") %>% 
@@ -198,6 +195,8 @@ m_weight <- sex_weights_sum %>%
 ### Cohen's D
 
 ```{r}
+# Means comparison continued
+
 # Run cohen's d for effect size
 weight_effect <- cohen.d(fem_weight, m_weight)
 # View effect size
@@ -207,6 +206,8 @@ weight_effect
 ### t-test
 
 ```{r}
+# Means comparison continued
+
 # Run a t-test
 weight_t <- t.test(fem_weight, m_weight)
 # View t-test results
@@ -216,7 +217,8 @@ weight_t
 ### Code for Actual Difference in Means
 
 ```{r}
-# Run code to get the means and SDs for both female and male vectors
+# Run code to get the means and SDs for both female and male vectors in order to calculate the actual difference in means
+
 fem_mean <- mean(fem_weight)
 m_mean <- mean(m_weight)
 fem_sd <- sd(fem_weight)
@@ -231,7 +233,6 @@ Outcome of an unpaired two-sample t-test
 Note: Exploratory graphs (e.g. histograms, QQ-plots) to explore assumptions of your t-test should not show up in your final knitted document, but you DO still need to create and think about them to determine whether a t-test is appropriate. If you want keep the code chunk containing those exploratory visualizations in your .Rmd but not appear in the knitted doc, you can add `include = FALSE` in the code chunk header.
 
 
-
 4. Relationship between juvenile weight & hind foot length. Explore the relationship between juvenile snowshoe hare hind foot length (variable `hindft`, recorded in millimeters), and weight. Include all juvenile hares in the study. Create a final visualization of juvenile hare hind foot length versus weight. Include a figure caption.
 
 
@@ -240,7 +241,9 @@ Upon seeing your graph, your “boss” tells you to try out linear regression t
 
 In 2 - 3 sentences below your figure, describe the outcome of your linear regression exploration (e.g. slope interpretation, R2 value, and Pearson's r correlation) and touch briefly on which assumption(s) of linear regression may be a concern, and additional thoughts you have about how well (or not well…) the linear model describes the relationship. What worries you? 
 
-Summary: Include a very short summary describing your main findings from your juvenile hares exploration (bullet points are fine)
+# Summary: 
+Include a very short summary describing your main findings from your juvenile hares exploration (bullet points are fine)
 
-Citations: Include citations (professionally formatted), including the data citation and any other resources that were references in your mini report. 
+# Citations: 
+Include citations (professionally formatted), including the data citation and any other resources that were references in your mini report. 
 
