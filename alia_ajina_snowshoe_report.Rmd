@@ -62,7 +62,7 @@ ggplot(data = juvenile_hare,
        aes(x = year, y = hare_count)) +
 # Change aesthetics accordingly
   geom_col(color = "#964B00", fill = "#964B00") +
-  theme_minimal() +   
+  theme_grey() +   
   scale_x_continuous(breaks = 1998:2012) +
   scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140)) +
   labs( x = "Year",
@@ -170,7 +170,7 @@ sex_weights_summary %>%
                       "Median Weight (g)",
                       "Standard Deviation (g)",
                       "Sample Size"),
-        caption = "<center>Table 1: Summary statistics of male and female juvenile snowshoe hare's weight (g) at Bonanza Creek LTER<center>") %>% 
+        caption = "<center>Table 1: Summary statistics of male and female juvenile snowshoe hare's weight (g) at Bonanza Creek LTER. Data: Kielland et al. (2017)<center>") %>% 
   kable_styling(bootstrap_options = "bordered",
                 full_width = F, position = "center")
 
@@ -250,25 +250,6 @@ filter(age == "j") %>%
   select(hindft, weight)
 ```
 
-```{r visualization scatter plot}
-# Create a final visualization of juvenile hare hind foot length vs weight
-ggplot(data = hare_weight_hindft, aes(x = hindft, y = weight)) +
-  geom_point(color = "#964B00", size = 2) +
-  geom_smooth(method = "lm", color = "black") +
-  theme_minimal() +
-  labs(x = "Hind Foot Length (mm)", 
-       y = "Weight (g)" ) + 
-# Adjust positioning
-  theme(axis.text.x = element_text(size = 6, hjust = 0.5),
-        axis.text.y = element_text(size = 6),
-        axis.title.x = element_text(hjust = 0.5, 
-                                    vjust = 0.5),
-        plot.caption = element_text(hjust = .8))
-```
-
-**Figure 4:** Visual relationship between all juvenile snowshoe hare's hind foot length (mm) and weight (g).
-
-
 ```{r linear regression, include = FALSE}
 # Perform a linear regression to describe how juvenile snowshoe hare weight changes with respect to hind foot length
 lm_hare <- lm(weight ~ hindft, data = hare_weight_hindft)
@@ -296,15 +277,33 @@ plot(lm_hare)
 # Pearson's r
 hare_cor <- cor.test(hare_weight_hindft$weight, hare_weight_hindft$hindft)
 
-# View result
-invisible(hare_cor)
+# View result in tidy output
+hare_cor_tidy <- tidy(hare_cor)
 ```
 
-Linear regression exploration was used to further describe the relationship between juvenile snowshoe hare's weight changes (g) with respect to hind foot length (mm) for all juvenile hares within the data set. A regression model was found ($\beta$ = `r round(hare_coef,2)`, F(`r lm_hare_glance$df`,`r lm_hare_glance$df.residual`) = `r round(lm_hare_glance$statistic,1)`, p < 0.001) with an R^2^ of `r round(lm_hare_glance$r.squared,2)`.
+```{r visualization scatter plot}
+# Create a final visualization of juvenile hare hind foot length vs weight
+ggplot(data = hare_weight_hindft, aes(x = hindft, y = weight)) +
+  geom_point(color = "#964B00", size = 2) +
+  geom_smooth(method = "lm", color = "black") +
+  theme_grey() +
+  labs(x = "Hind Foot Length (mm)", 
+       y = "Weight (g)" ) + 
+# Adjust positioning
+  theme(axis.text.x = element_text(size = 6, hjust = 0.5),
+        axis.text.y = element_text(size = 6),
+        axis.title.x = element_text(hjust = 0.5, 
+                                    vjust = 0.5),
+        plot.caption = element_text(hjust = .8))
+```
 
-With this linear regression, the R^2^ value of `r round(lm_hare_glance$r.squared,2)` means that only `r round(lm_hare_glance$r.squared, 2) * 100`% of the variance in body mass (g) is predictable from the change in hind foot length (mm). 
+**Figure 4:** Visual relationship between all juvenile snowshoe hare's hind foot length (mm) and weight (g). Points are individual juvenile hares. Linear model summary: $\beta$ = `r round(hare_coef,2)` g mm^-1^, `r lm_hare_glance$d` (p < 0.001), R^2^ = `r round(lm_hare_glance$r.squared,2)`. Data: Kielland et al. (2017).
 
-Using a Pearson's R correlation, it is shown that there is a *moderately strong* correlation between juvenile hare hind foot length (mm) and body mass (g) (*r* = `r round(hare_cor$estimate,2)`, t(`r hare_cor$parameter`) = `r round(hare_cor$statistic,2)`, p < 0.001). 
+Linear regression exploration was used to further describe the relationship between juvenile snowshoe hare's weight changes (g) with respect to hind foot length (mm) for all juvenile hares within the data set. A regression model was found $\beta$ = `r round(hare_coef,2)`g mm^-1^,`r lm_hare_glance$d` (p < 0.001), with an R^2^ of `r round(lm_hare_glance$r.squared,2)`.
+
+With this linear regression, the R^2^ value of `r round(lm_hare_glance$r.squared,2)` means that only `r round(lm_hare_glance$r.squared, 2) * 100`% of the variance in body mass (g) is predictable from the change in hind foot length (mm). This means that `r 100 - round(lm_hare_glance$r.squared,2) * 100`% of the variance is not explained by this model. This is an indication that some important predictor variables, like sex, may be missing. However, given the exploratory diagnostic plots (not included), the data was somewhat normally distributed with homoscedastic residuals which resulted in a linear regression model being appropriate to explore this data.
+
+Using a Pearson's R correlation, it is shown that there is a *moderately strong*, positive correlation between juvenile hare hind foot length (mm) and body mass (g) (*r* = `r round(hare_cor_tidy$estimate,2)`, p < 0.001). 
 
 Certain variables, for example, the sex of juvenile hares, is not addressed in this linear regression, which may be cause for concern as it may impact the relationship between hare weight changes and hind foot length.
 
@@ -312,7 +311,7 @@ Certain variables, for example, the sex of juvenile hares, is not addressed in t
 
 - The second year of the study, 1999, contained the highest density of juvenile hares trapped.
 - On average, female juvenile snowshoe hares are smaller than male juvenile snowshoe hares in weight. Male juvenile snowshoe hares have a mean of `r round(m_mean, 2)` and female juvenile snowhoe hares have a mean of `r round(fem_mean, 2)`.
-- Juvenile hare weight seems to be related to hind foot length. The simple linear regression between the two has a slope of `r round(lm_hare_tidy$statistic[2], 2)`. In other words, for every 1mm increase in hind foot length, on average, it is expected that weight will increase by `r round(lm_hare_tidy$statistic[2], 2)`.
+- Juvenile hare weight seems to be related to hind foot length. The simple linear regression between the two has a slope of `r round(lm_hare_tidy$estimate[2], 2)`. In other words, for every 1mm increase in hind foot length, on average, it is expected that weight will increase by `r round(lm_hare_tidy$estimate[2], 2)`.
 
 ## Next Steps:
 
